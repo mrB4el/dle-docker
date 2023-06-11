@@ -1,5 +1,6 @@
-﻿*.log
-app/
-db/data
-!app/.gitkeep
+﻿db/data/*
 !db/data/.gitkeep
+app/*
+!app/.gitkeep
+*.logs
+*.log
