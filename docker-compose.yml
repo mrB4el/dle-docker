@@ -1,0 +1,61 @@
+version: '3.9'
+name: dle-docker
+
+services:
+  # Apache
+  apache:
+    image: httpd:${APACHE_VERSION}
+    container_name: apache
+    ports:
+    - '80:80'
+    - '443:443'
+    volumes:
+    - ${PWD}/app:/var/www/html
+    - ${PWD}/log/apache:/usr/local/apache2/logs
+    - ${PWD}/apache/httpd.conf:/usr/local/apache2/conf/httpd.conf
+    depends_on:
+    - php
+    - mariadb
+    networks:
+      default:
+        ipv4_address: 172.16.1.2
+  
+  # PHP Service
+  php:
+    container_name: php
+    build:
+      ${PWD}/php
+    volumes:
+    - ${PWD}/app:/var/www/html
+    - ${PWD}/php/php.ini:/usr/local/etc/php/php.ini
+    depends_on:
+    - mariadb
+    networks:
+      default:
+        ipv4_address: 172.16.1.3
+  
+  # MariaDB Service
+  mariadb:
+    image: "mariadb:${MARIADB_VERSION}"
+    container_name: mariadb
+    restart: 'always'
+    ports:
+    - '3306:3306'
+    volumes: 
+    - ${PWD}/db/data:/var/lib/mysql
+    - ${PWD}/log/mariadb:/var/log/mariadb/
+    - ${PWD}/db/conf:/etc/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+    networks:
+      default:
+        ipv4_address: 172.16.1.4
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.1.0/24

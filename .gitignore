@@ -1,0 +1,5 @@
+﻿*.log
+app/
+db/data
+!app/.gitkeep
+!db/data/.gitkeep
