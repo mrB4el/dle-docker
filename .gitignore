@@ -4,3 +4,4 @@ app/*
 !app/.gitkeep
 *.logs
 *.log
+log/*
